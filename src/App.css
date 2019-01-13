@@ -1,0 +1,18 @@
+.l-container{
+  margin: 0 auto;
+  max-width: 1140px;
+  width: 100%;
+}
+.l-section{
+  margin-bottom: 20px;
+}
+.mb-1g{
+  margin-bottom: 20px;
+}
+.l-d-flex{
+  display: flex;
+}
+.l-justify-content-between{
+  justify-content: space-between
+}
+
