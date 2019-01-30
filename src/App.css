@@ -1,8 +1,3 @@
-.l-container{
-  margin: 0 auto;
-  max-width: 1140px;
-  width: 100%;
-}
 .l-section{
   margin-bottom: 20px;
 }
@@ -13,6 +8,8 @@
   display: flex;
 }
 .l-justify-content-between{
-  justify-content: space-between
+  justify-content: space-between;
 }
-
+.c-card{
+  padding: 1rem;
+}

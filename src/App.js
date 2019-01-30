@@ -16,7 +16,7 @@ class App extends Component {
           gutterBottom
           position="static"
           color="secondary">
-          <Toolbar className="l-container l-d-flex l-justify-content-between">
+          <Toolbar className="l-d-flex l-justify-content-between">
             <Typography variant="h6" color="inherit">
               Coin Market
             </Typography>
