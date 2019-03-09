@@ -7,8 +7,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import {
+  Fade,
   Paper,
   Card,
   CardActions,
@@ -55,6 +58,7 @@ class Market extends Component {
         'XLM',
         'TRX',
       ],
+      checkedViewAllCoin: false,
       selectedCoins: ['BTC', 'ETH', 'LTC'],
       activeCoins: ['BTC', 'ETH', 'LTC'],
       tsymsList: ['USD', 'EUR', 'JPY'],
@@ -66,7 +70,7 @@ class Market extends Component {
     };
   }
   loadMarket() {
-    var coins = this.state.selectedCoins;
+    var coins = this.state.checkedViewAllCoin ? this.state.coinList : this.state.selectedCoins;
     var tsyms = this.state.activeTsyms;
     var url =
       'https://min-api.cryptocompare.com/data/pricemulti?fsyms=' +
@@ -102,6 +106,14 @@ class Market extends Component {
   changeActiveCurrency = event => {
     this.setState({activeTsyms: event.target.value}, this.loadMarket);
   };
+  handleSwitch = name => event => {
+    this.setState({[name]: event.target.checked},() =>{
+      if (name === 'checkedViewAllCoin'){
+        this.loadMarket()
+      }
+    })
+
+  }
   componentDidMount() {
     if (!navigator.onLine) {
       return this.restoreStateFromLocalStorage();
@@ -119,15 +131,23 @@ class Market extends Component {
   }
   render() {
     const priceList = this.state.priceList;
-    const activeCoins = this.state.activeCoins;
+    const coinList = this.state.checkedViewAllCoin ? this.state.coinList : this.state.selectedCoins;
     return (
       <div className="l-container">
         <Grid container>
           <Grid className="c-card" item sm={12} lg={3}>
-            <Paper style={{padding: '20px', marginTop: '15px', position: 'sticky', top: '15px'}}>
-              <Typography variant="h4" component="p">Settings</Typography>
-              <FormControl margin="normal" fullWidth={true}>
-                <InputLabel htmlFor="select-multiple">Select coins</InputLabel>
+            <Paper
+              style={{
+                padding: '20px',
+                marginTop: '15px',
+                position: 'sticky',
+                top: '15px',
+              }}>
+              <Typography variant="h4" component="p">
+                Dash Settings
+              </Typography>
+              <FormControl disabled={this.state.checkedViewAllCoin} margin="normal" fullWidth={true}>
+                <InputLabel htmlFor="select-multiple">Select coin list</InputLabel>
                 <Select
                   multiple
                   value={this.state.selectedCoins}
@@ -140,55 +160,66 @@ class Market extends Component {
                   ))}
                 </Select>
               </FormControl>
-      <FormControl margin="normal" fullWidth={true}>
-        <InputLabel htmlFor="select-multiple">Select currency</InputLabel>
-        <Select
-          value={this.state.activeTsyms}
-          onChange={this.changeActiveCurrency}
-          input={<Input id="select-multiple" />}>
-          {this.state.tsymsList.map(name => (
-            <MenuItem key={name} value={name}>
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Paper>
+              <FormControl margin="normal" fullWidth={true}>
+                <InputLabel htmlFor="select-multiple">
+                  Select currency
+                </InputLabel>
+                <Select
+                  value={this.state.activeTsyms}
+                  onChange={this.changeActiveCurrency}
+                  input={<Input id="select-multiple" />}>
+                  {this.state.tsymsList.map(name => (
+                    <MenuItem key={name} value={name}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={this.state.checkedViewAllCoin}
+                    onChange={this.handleSwitch('checkedViewAllCoin')}
+                    value="checkedA"
+                  />
+                }
+                label="View all coin list"
+              />
+            </Paper>
           </Grid>
 
           <Grid className="c-card" item sm={12} lg={9}>
             <Grid container>
-              {activeCoins.map(name => (
+              {coinList.map(name => (
                 <Grid key={name} className="c-card" item lg={4} md={6} xs={12}>
-                  <Card>
-                    <CardContent>
-                      <Typography
-                        align="center"
-                        variant="h2"
-                        component="p">
-                        {priceList[name] &&
-                            priceList[name][this.state.activeTsyms] ? (
-                              <span>
-                                {this.state.tsymsIcons[this.state.activeTsyms]} {priceList[name][this.state.activeTsyms]}
-                              </span>
-
-                            ) : (
-                              <CircularProgress size={52} color="secondary" />
-                            )}
-                          </Typography>
-                          <Typography
-                            align="center"
-                            variant="h4"
-                            component="p"
-                            color="textSecondary">
-                            1 {name}
-                          </Typography>
-                        </CardContent>
-                        <CardActions  style={{justifyContent: 'center'}}>
-                          <Button color="secondary" >Learn more</Button>
-                        </CardActions>
-                      </Card>
-                    </Grid>
+                  <Fade in={true} timeout={300}>
+                    <Card>
+                      <CardContent>
+                        <Typography align="center" variant="h2" component="p">
+                          {priceList[name] &&
+                              priceList[name][this.state.activeTsyms] ? (
+                                <span>
+                                  {this.state.tsymsIcons[this.state.activeTsyms]}{' '}
+                                  {priceList[name][this.state.activeTsyms]}
+                                </span>
+                              ) : (
+                                <CircularProgress size={52} color="secondary" />
+                              )}
+                            </Typography>
+                            <Typography
+                              align="center"
+                              variant="h4"
+                              component="p"
+                              color="textSecondary">
+                              1 {name}
+                            </Typography>
+                          </CardContent>
+                          <CardActions style={{justifyContent: 'center'}}>
+                            <Button color="secondary">Learn more</Button>
+                          </CardActions>
+                        </Card>
+                      </Fade>
+                </Grid>
               ))}
             </Grid>
           </Grid>

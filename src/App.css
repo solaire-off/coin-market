@@ -1,3 +1,6 @@
+body{
+  overflow-y: scroll;
+}
 .l-section{
   margin-bottom: 20px;
 }
