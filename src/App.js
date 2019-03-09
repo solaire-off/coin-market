@@ -6,14 +6,13 @@ import Market from './components/Market/Market';
 
 class App extends Component {
   refreshMarket = () => {
-    this.child.reloadMarket();
+    this.child.loadMarket();
   };
   render() {
     return (
       <div className="App">
         <AppBar
           className="l-section"
-          gutterBottom
           position="static"
           color="secondary">
           <Toolbar className="l-d-flex l-justify-content-between">

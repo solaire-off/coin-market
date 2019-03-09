@@ -13,3 +13,6 @@
 .c-card{
   padding: 1rem;
 }
+.c-form-control{
+  min-width: 120px;
+}
