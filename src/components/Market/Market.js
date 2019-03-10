@@ -11,6 +11,9 @@ import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import {
+  FormLabel,
+  // FormHelperText,
+  FormGroup,
   Fade,
   Paper,
   Card,
@@ -22,23 +25,6 @@ import {
   CircularProgress,
 } from '@material-ui/core/';
 
-function getTime() {
-  var now = new Date();
-  var hour = now.getHours();
-  var minute = now.getMinutes();
-  var second = now.getSeconds();
-  if (hour.toString().length === 1) {
-    hour = '0' + hour;
-  }
-  if (minute.toString().length === 1) {
-    minute = '0' + minute;
-  }
-  if (second.toString().length === 1) {
-    second = '0' + second;
-  }
-  var Time = hour + ':' + minute + ':' + second;
-  return Time;
-}
 
 class Market extends Component {
   constructor() {
@@ -65,15 +51,16 @@ class Market extends Component {
       tsymsIcons: {USD: '$', EUR: '€', JPY: '¥'},
       activeTsyms: 'USD',
       priceList: [],
+      generalInfo: [],
       isLoaded: false,
+      viewStyle: 'card',
       loadedTime: '',
     };
   }
   loadMarket() {
     var coins = this.state.checkedViewAllCoin ? this.state.coinList : this.state.selectedCoins;
-    var tsyms = this.state.activeTsyms;
-    var url =
-      'https://min-api.cryptocompare.com/data/pricemulti?fsyms=' +
+    var tsyms = this.state.viewStyle === 'card' ? this.state.activeTsyms : this.state.tsymsList.join(',')
+    var url = 'https://min-api.cryptocompare.com/data/pricemulti?fsyms=' +
       coins.join(',') +
       '&tsyms=' +
       tsyms;
@@ -90,6 +77,28 @@ class Market extends Component {
       .catch(error => {
         console.log(error);
       });
+
+  }
+  loadGeneralInfo(){
+    var coins = this.state.coinList.join(',')
+    var url = 'https://min-api.cryptocompare.com/data/coin/generalinfo?fsyms=' + coins + '&tsym=USD'
+
+    axios
+      .get(url)
+      .then(response => {
+        this.setState({
+          generalInfo: response.data.Data
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+  }
+  getGeneralFieldByTitle(field, name){
+    console.log(this.state.generalInfo.filter((item) => item.CoinInfo.Name === name)
+);
+    return this.state.generalInfo.filter((item) => item.CoinInfo.Name === name)[0].CoinInfo[field]
   }
   saveStateToLocalStorage() {
     localStorage.setItem('today-state', JSON.stringify(this.state));
@@ -112,13 +121,20 @@ class Market extends Component {
         this.loadMarket()
       }
     })
-
+  }
+  handleRadio = name => event => {
+    this.setState({[name]: event.target.value}, () =>{
+      if (name === 'viewStyle'){
+        this.loadMarket()
+      }
+    })
   }
   componentDidMount() {
     if (!navigator.onLine) {
       return this.restoreStateFromLocalStorage();
     }
 
+    this.loadGeneralInfo();
     this.loadMarket();
 
     this.cryptoSubscription = setInterval(() => this.loadMarket(), 5000);
@@ -127,7 +143,7 @@ class Market extends Component {
   }
   componentWillUnmount() {
     this.props.onRef(undefined);
-    // clearInterval(this.cryptoSubscription);
+    clearInterval(this.cryptoSubscription);
   }
   render() {
     const priceList = this.state.priceList;
@@ -160,7 +176,7 @@ class Market extends Component {
                   ))}
                 </Select>
               </FormControl>
-              <FormControl margin="normal" fullWidth={true}>
+              <FormControl disabled={this.state.viewStyle === 'table'} margin="normal" fullWidth={true}>
                 <InputLabel htmlFor="select-multiple">
                   Select currency
                 </InputLabel>
@@ -185,13 +201,32 @@ class Market extends Component {
                 }
                 label="View all coin list"
               />
+              <FormControl component="fieldset" >
+                <FormLabel component="legend">Select view style</FormLabel>
+                <FormGroup row>
+                  <FormControlLabel
+                    control={
+                      <Checkbox checked={this.state.viewStyle === 'card'} onChange={this.handleRadio('viewStyle')} value="card" />
+                    }
+                    label="Card-like"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox checked={this.state.viewStyle === 'table'} onChange={this.handleRadio('viewStyle')} value="table" />
+                    }
+                    label="Table-like"
+                  />
+                </FormGroup>
+              </FormControl>
             </Paper>
           </Grid>
 
           <Grid className="c-card" item sm={12} lg={9}>
             <Grid container>
               {coinList.map(name => (
-                <Grid key={name} className="c-card" item lg={4} md={6} xs={12}>
+                <>
+                {this.state.viewStyle === 'card' ? (
+                  <Grid key={name} className="c-card" item lg={4} md={6} xs={12}>
                   <Fade in={true} timeout={300}>
                     <Card>
                       <CardContent>
@@ -214,12 +249,70 @@ class Market extends Component {
                               1 {name}
                             </Typography>
                           </CardContent>
-                          <CardActions style={{justifyContent: 'center'}}>
+                          <CardActions style={{justifyContent: 'center', flexDirection:'row'}}>
                             <Button color="secondary">Learn more</Button>
+                            <Button color="secondary">Add to favorite</Button>
                           </CardActions>
                         </Card>
                       </Fade>
-                </Grid>
+                  </Grid>
+                ): (
+                  <Fade in={true} timeout={300}>
+                    <Grid key={name} className="c-card" item xs={12} >
+                      <Card>
+                        <CardContent>
+                          <Grid container>
+
+                            <Grid item lg={2} md={3} sm={4}>
+                              <img alt={name} style={{maxWidth: '100%', height: 'auto', maxHeight: '120px'}} src={"https://cryptocompare.com/"+this.getGeneralFieldByTitle('ImageUrl',name)} />
+                            </Grid>
+
+                            <Grid item lg={4} md={4} sm={8}>
+                              <Typography align="left" variant="h3" component="p">
+                                {this.getGeneralFieldByTitle('FullName',name)}
+                              </Typography>
+                              <Typography align="left" variant="title" component="p">
+                                Algorithm: {this.getGeneralFieldByTitle('Algorithm',name)} 
+                              </Typography>
+                              <Typography align="left" variant="title" component="p">
+                                ProofType: {this.getGeneralFieldByTitle('ProofType',name)} 
+                              </Typography>
+                            </Grid>
+
+                            <Grid item lg={4}>
+                              {this.state.tsymsList.map((tsums => (
+                                <Typography align="left" variant="h4" component="p">
+                                  {priceList[name] && priceList[name][tsums] ? (
+                                    <span>
+                                      {this.state.tsymsIcons[tsums]}{' '}
+                                      {priceList[name][tsums]}
+                                    </span>
+                                  ) : (
+                                    <CircularProgress size={52} color="secondary" />
+                                  )}
+                                </Typography>
+                              )))}
+                            </Grid>
+                            <Grid item lg={2}>
+                              <Typography
+                                align="center"
+                                variant="h4"
+                                component="p"
+                                color="textSecondary">
+                                1 {name}
+                              </Typography>
+                              <CardActions style={{justifyContent: 'center', flexDirection:'column'}}>
+                                <Button color="secondary">Learn more</Button>
+                                <Button color="secondary">Add to favorite</Button>
+                              </CardActions>
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </Fade>
+                )}
+                </>
               ))}
             </Grid>
           </Grid>
