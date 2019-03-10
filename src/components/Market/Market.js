@@ -45,8 +45,8 @@ class Market extends Component {
         'TRX',
       ],
       checkedViewAllCoin: false,
-      selectedCoins: ['BTC', 'ETH', 'LTC'],
-      activeCoins: ['BTC', 'ETH', 'LTC'],
+      selectedCoins: ['BTC', 'ETH', 'LTC','DASH', 'MLN', 'XRP'],
+      activeCoins: ['BTC', 'ETH', 'LTC','DASH', 'MLN', 'XRP'],
       tsymsList: ['USD', 'EUR', 'JPY'],
       tsymsIcons: {USD: '$', EUR: '€', JPY: '¥'},
       activeTsyms: 'USD',
@@ -88,6 +88,8 @@ class Market extends Component {
       .then(response => {
         this.setState({
           generalInfo: response.data.Data
+        },()=>{
+          this.loadMarket()
         });
       })
       .catch(error => {
@@ -96,8 +98,6 @@ class Market extends Component {
 
   }
   getGeneralFieldByTitle(field, name){
-    console.log(this.state.generalInfo.filter((item) => item.CoinInfo.Name === name)
-);
     return this.state.generalInfo.filter((item) => item.CoinInfo.Name === name)[0].CoinInfo[field]
   }
   saveStateToLocalStorage() {
@@ -134,8 +134,8 @@ class Market extends Component {
       return this.restoreStateFromLocalStorage();
     }
 
+    
     this.loadGeneralInfo();
-    this.loadMarket();
 
     this.cryptoSubscription = setInterval(() => this.loadMarket(), 5000);
 
@@ -149,7 +149,7 @@ class Market extends Component {
     const priceList = this.state.priceList;
     const coinList = this.state.checkedViewAllCoin ? this.state.coinList : this.state.selectedCoins;
     return (
-      <div className="l-container">
+      <div className="l-container l-container--market">
         <Grid container>
           <Grid className="c-card" item sm={12} lg={3}>
             <Paper
@@ -201,7 +201,7 @@ class Market extends Component {
                 }
                 label="View all coin list"
               />
-              <FormControl component="fieldset" >
+              <FormControl component="fieldset" fullWidth={true} >
                 <FormLabel component="legend">Select view style</FormLabel>
                 <FormGroup row>
                   <FormControlLabel
@@ -224,95 +224,105 @@ class Market extends Component {
           <Grid className="c-card" item sm={12} lg={9}>
             <Grid container>
               {coinList.map(name => (
-                <>
-                {this.state.viewStyle === 'card' ? (
-                  <Grid key={name} className="c-card" item lg={4} md={6} xs={12}>
-                  <Fade in={true} timeout={300}>
-                    <Card>
-                      <CardContent>
-                        <Typography align="center" variant="h2" component="p">
-                          {priceList[name] &&
-                              priceList[name][this.state.activeTsyms] ? (
-                                <span>
-                                  {this.state.tsymsIcons[this.state.activeTsyms]}{' '}
-                                  {priceList[name][this.state.activeTsyms]}
-                                </span>
-                              ) : (
-                                <CircularProgress size={52} color="secondary" />
-                              )}
-                            </Typography>
+                <Grid key={name} 
+                  className="c-card" 
+                  item 
+                  xs={12} 
+                  sm={this.state.viewStyle==="card" ? 6 : 12}  
+                  md={this.state.viewStyle==="card" ? 6 : 12} 
+                  lg={this.state.viewStyle==="card" ? 4 : 12} >
+                    {this.state.viewStyle === 'card' ? (
+                      <Fade in={true} timeout={300}>
+                        <Card>
+                          <CardContent>
                             <Typography
                               align="center"
-                              variant="h4"
+                              variant="h5"
                               component="p"
                               color="textSecondary">
                               1 {name}
                             </Typography>
+                            <Typography align="center" variant="h3" component="div">
+                              {priceList[name] &&
+                                  priceList[name][this.state.activeTsyms] ? (
+                                    <span>
+                                      {this.state.tsymsIcons[this.state.activeTsyms]}{' '}
+                                      {priceList[name][this.state.activeTsyms]}
+                                    </span>
+                                  ) : (
+                                    <CircularProgress size={42} color="secondary" />
+                                  )}
+                                </Typography>
+                                <Typography
+                                  align="center"
+                                  variant="h4"
+                                  component="p"
+                                  color="textSecondary">
+                                  {this.state.isLoaded ? this.getGeneralFieldByTitle('FullName', name) : ''}
+                                </Typography>
+                              </CardContent>
+                              <CardActions style={{justifyContent: 'center', flexDirection:'row'}}>
+                                <Button color="secondary">Learn more</Button>
+                                <Button color="secondary">Add to favorite</Button>
+                              </CardActions>
+                            </Card>
+                          </Fade>
+                    ): (
+                      <Fade in={true} timeout={300}>
+                        <Card>
+                          <CardContent style={{paddingBottom: '16px'}}>
+                            <Grid container>
+                              <Grid className="text-xs-center" item  lg={2} md={3} sm={3} xs={12}>
+                                <img className="detail-coin-img" alt={name} style={{maxWidth: '100%', height: 'auto', maxHeight: '120px'}} src={"https://cryptocompare.com/"+this.getGeneralFieldByTitle('ImageUrl',name)} />
+                              </Grid>
+                              <Grid item lg={4} md={3} sm={4} xs={12}>
+                                <Typography className="text-xs-center" align="left" variant="h3" component="p">
+                                  {this.getGeneralFieldByTitle('FullName',name)}
+                                </Typography>
+                                <Typography className="text-xs-center" align="left" variant="title" component="p">
+                                  Algorithm: {this.getGeneralFieldByTitle('Algorithm',name)} 
+                                </Typography>
+                                <Typography gutterBottom={true} className="text-xs-center" align="left" variant="title" component="p">
+                                  ProofType: {this.getGeneralFieldByTitle('ProofType',name)} 
+                                </Typography>
+                              </Grid>
+                              <Grid item lg={4} md={3} sm={4} xs={12}>
+                                {this.state.tsymsList.map((tsums => (
+                                  <Typography className="text-xs-center" key={tsums} align="left" variant="h4" component="div">
+                                    {priceList[name] && priceList[name][tsums] ? (
+                                      <span>
+                                        {this.state.tsymsIcons[tsums]}{' '}
+                                        {priceList[name][tsums]}
+                                      </span>
+                                    ) : (
+                                      <CircularProgress size={38} color="secondary" />
+                                    )}
+                                  </Typography>
+                                )))}
+                              </Grid>
+                              <Grid className="d-sm-none" item lg={2} md={3} sm={4} xs={12}>
+                                <Typography
+                                  align="center"
+                                  variant="h4"
+                                  component="p"
+                                  color="textSecondary">
+                                  {name}
+                                </Typography>
+                                <CardActions  style={{alignItems: 'center', justifyContent: 'center', flexDirection:'column'}}>
+                                  <Button color="secondary">Learn more</Button>
+                                  <Button color="secondary">Add to favorite</Button>
+                                </CardActions>
+                              </Grid>
+                            </Grid>
                           </CardContent>
-                          <CardActions style={{justifyContent: 'center', flexDirection:'row'}}>
+                          <CardActions className="d-none d-sm-flex" style={{alignItems: 'center', justifyContent: 'center' }}>
                             <Button color="secondary">Learn more</Button>
                             <Button color="secondary">Add to favorite</Button>
                           </CardActions>
                         </Card>
                       </Fade>
-                  </Grid>
-                ): (
-                  <Fade in={true} timeout={300}>
-                    <Grid key={name} className="c-card" item xs={12} >
-                      <Card>
-                        <CardContent>
-                          <Grid container>
-
-                            <Grid item lg={2} md={3} sm={4}>
-                              <img alt={name} style={{maxWidth: '100%', height: 'auto', maxHeight: '120px'}} src={"https://cryptocompare.com/"+this.getGeneralFieldByTitle('ImageUrl',name)} />
-                            </Grid>
-
-                            <Grid item lg={4} md={4} sm={8}>
-                              <Typography align="left" variant="h3" component="p">
-                                {this.getGeneralFieldByTitle('FullName',name)}
-                              </Typography>
-                              <Typography align="left" variant="title" component="p">
-                                Algorithm: {this.getGeneralFieldByTitle('Algorithm',name)} 
-                              </Typography>
-                              <Typography align="left" variant="title" component="p">
-                                ProofType: {this.getGeneralFieldByTitle('ProofType',name)} 
-                              </Typography>
-                            </Grid>
-
-                            <Grid item lg={4}>
-                              {this.state.tsymsList.map((tsums => (
-                                <Typography align="left" variant="h4" component="p">
-                                  {priceList[name] && priceList[name][tsums] ? (
-                                    <span>
-                                      {this.state.tsymsIcons[tsums]}{' '}
-                                      {priceList[name][tsums]}
-                                    </span>
-                                  ) : (
-                                    <CircularProgress size={52} color="secondary" />
-                                  )}
-                                </Typography>
-                              )))}
-                            </Grid>
-                            <Grid item lg={2}>
-                              <Typography
-                                align="center"
-                                variant="h4"
-                                component="p"
-                                color="textSecondary">
-                                1 {name}
-                              </Typography>
-                              <CardActions style={{justifyContent: 'center', flexDirection:'column'}}>
-                                <Button color="secondary">Learn more</Button>
-                                <Button color="secondary">Add to favorite</Button>
-                              </CardActions>
-                            </Grid>
-                          </Grid>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  </Fade>
-                )}
-                </>
+                    )}
+                </Grid>
               ))}
             </Grid>
           </Grid>

@@ -16,6 +16,59 @@ body{
 .c-card{
   padding: 1rem;
 }
+.c-card__content{padding: 16px}
 .c-form-control{
   min-width: 120px;
 }
+.l-container{
+  max-width: 1366px;
+  margin: 0 auto;
+}
+.l-container--header{
+  width: 100%;
+}
+.l-toolbar{
+  width: 100%;
+  max-width: 1366px;
+  padding: 0;
+  margin: 0 auto;
+}
+.d-none{
+  display: none !important;
+}
+
+
+@media all and (max-width: 960px){
+  .d-sm-none{
+    display: none !important;
+  }
+  .d-sm-flex{
+    display: flex !important;
+  }
+
+}
+@media all and (max-width: 768px){
+  html{
+    font-size: 14px;
+  }
+}
+
+@media all and (max-width: 600px){
+  .text-xs-center{
+    text-align: center !important;
+  }
+  .flex-xs-row{
+    flex-direction: row !important;
+  }
+  .d-xs-none{
+    display: none !important;    
+  }
+  .detail-coin-img{
+    max-width: 60px;
+    margin: 0 auto;
+  }
+  .d-xs-flex{
+    display: flex !important;
+  }
+}
+
