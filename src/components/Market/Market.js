@@ -98,7 +98,12 @@ class Market extends Component {
 
   }
   getGeneralFieldByTitle(field, name){
-    return this.state.generalInfo.filter((item) => item.CoinInfo.Name === name)[0].CoinInfo[field]
+    try{
+      return this.state.generalInfo.filter((item) => item.CoinInfo.Name === name)[0].CoinInfo[field]
+    }
+    catch{
+      return null
+    }
   }
   saveStateToLocalStorage() {
     localStorage.setItem('today-state', JSON.stringify(this.state));
@@ -110,36 +115,67 @@ class Market extends Component {
     this.setState(state);
   }
   changeActiveCoins = event => {
-    this.setState({selectedCoins: event.target.value}, this.loadMarket);
+    var value = event.target.value;
+    this.setState({selectedCoins: event.target.value}, ()=>{
+      localStorage.setItem('selectedCoins', JSON.stringify(value));
+      this.loadMarket()
+    });
   };
   changeActiveCurrency = event => {
-    this.setState({activeTsyms: event.target.value}, this.loadMarket);
+    var value = event.target.value;
+    this.setState({activeTsyms: event.target.value}, ()=>{
+      localStorage.setItem('activeTsyms', JSON.stringify(value));
+      this.loadMarket()
+    });
   };
   handleSwitch = name => event => {
+    var checked = event.target.checked
     this.setState({[name]: event.target.checked},() =>{
       if (name === 'checkedViewAllCoin'){
+        localStorage.setItem('checkedViewAllCoin', JSON.stringify(checked));
         this.loadMarket()
       }
     })
   }
   handleRadio = name => event => {
+    var value = event.target.value;
     this.setState({[name]: event.target.value}, () =>{
       if (name === 'viewStyle'){
+        localStorage.setItem('viewStyle', JSON.stringify(value));
         this.loadMarket()
       }
     })
   }
   componentDidMount() {
-    if (!navigator.onLine) {
-      return this.restoreStateFromLocalStorage();
-    }
+    // if (!navigator.onLine) {
+    //   return this.restoreStateFromLocalStorage();
+    // }
 
-    
     this.loadGeneralInfo();
 
     this.cryptoSubscription = setInterval(() => this.loadMarket(), 5000);
 
     this.props.onRef(this);
+  }
+  componentWillMount(){
+    this.setState({
+      selectedCoins:
+        localStorage.getItem('selectedCoins') === null
+          ? this.state.selectedCoins
+          : JSON.parse(localStorage.getItem('selectedCoins')),
+      activeTsyms:
+        localStorage.getItem('activeTsyms') === null
+          ? this.state.activeTsyms
+          : JSON.parse(localStorage.getItem('activeTsyms')),
+      checkedViewAllCoin:
+        localStorage.getItem('checkedViewAllCoin') === null
+          ? this.state.checkedViewAllCoin
+          : JSON.parse(localStorage.getItem('checkedViewAllCoin')),
+      viewStyle:
+        localStorage.getItem('viewStyle') === null
+          ? this.state.viewStyle
+          : JSON.parse(localStorage.getItem('viewStyle')),
+    });
   }
   componentWillUnmount() {
     this.props.onRef(undefined);
