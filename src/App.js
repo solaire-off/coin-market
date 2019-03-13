@@ -1,37 +1,80 @@
 import React, {Component} from 'react';
 import './App.css';
-import {Grid, AppBar, Toolbar, Typography, IconButton} from '@material-ui/core/';
-import RefreshIcon from '@material-ui/icons/Refresh';
+
+import {connect} from 'react-redux';
+import {
+  setViewStyle,
+  setActiveTsyms,
+  setIsViewAllCoins,
+  setSelectedCoins,
+} from './actions/dashSettingsActions';
+
+import {fetchGeneralInfo, fetchPriceList} from './actions/coinListActions.js';
+
 import Market from './components/Market/Market';
+import Header from './components/Header';
 
 class App extends Component {
-  refreshMarket = () => {
-    this.child.loadMarket();
+  refreshMarketAction(){
+    this.props.fetchPriceListAction(
+      this.props.dash.selectedCoins,
+      this.props.dash.activeTsyms,
+      this.props.dash.viewStyle,
+      this.props.dash.isViewAllCoin,
+    );
+    console.log('Refresh priceList by <Header />');
   };
   render() {
     return (
       <div className="App">
-        <AppBar
-          className="l-section"
-          position="static"
-          color="secondary">
-          <Grid className="l-toolbar">
-            <Grid item lg={12}>
-              <Toolbar className="l-d-flex l-justify-content-between">
-                <Typography variant="h6" color="inherit">
-                  Coin Market &mdash; Fresh information about your favorite coin
-                </Typography>
-                <IconButton onClick={this.refreshMarket} color="inherit">
-                  <RefreshIcon />
-                </IconButton>
-              </Toolbar>
-            </Grid>
-          </Grid>
-        </AppBar>
-        <Market onRef={ref => (this.child = ref)} />
+        <Header refreshPriceList={() => {this.refreshMarketAction()}}  />
+        <Market 
+          // Dash actions
+          setViewStyle={this.props.setViewStyleAction}
+          setActiveTsyms={this.props.setActiveTsymsAction}
+          setIsViewAllCoins={this.props.setIsViewAllCoinsAction}
+          setSelectedCoins={this.props.setSelectedCoinsAction}
+
+          // CoinList actions
+          fetchGeneralInfo={this.props.fetchGeneralInfoAction}
+          fetchPriceList={this.props.fetchPriceListAction}
+
+          // Connect store from props
+          dash={this.props.dash}
+          coins={this.props.coins}
+        />
       </div>
     );
   }
 }
 
-export default App;
+// connect data from store
+const mapStateToProps = store => {
+  return {
+    dash: store.dash,
+    coins: store.coins,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    // Dash dispatch
+    setViewStyleAction: viewStyle => dispatch(setViewStyle(viewStyle)),
+    setIsViewAllCoinsAction: isViewAllCoin =>
+      dispatch(setIsViewAllCoins(isViewAllCoin)),
+    setActiveTsymsAction: activeTsyms => dispatch(setActiveTsyms(activeTsyms)),
+    setSelectedCoinsAction: selectedCoins =>
+      dispatch(setSelectedCoins(selectedCoins)),
+
+    // Coins dispatch
+    fetchGeneralInfoAction: (coins, tsyms, viewStyle, isViewAllCoin) =>
+      dispatch(fetchGeneralInfo(coins, tsyms, viewStyle, isViewAllCoin)),
+    fetchPriceListAction: (coins, tsyms, viewStyle, isViewAllCoin) =>
+      dispatch(fetchPriceList(coins, tsyms, viewStyle, isViewAllCoin)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);
