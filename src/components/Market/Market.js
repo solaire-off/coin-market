@@ -16,26 +16,17 @@ class Market extends Component {
       return null
     }
   }
+  checkIsThisFavoriteCoin(name){
+    if (this.props.dash.favoriteCoins.filter((item) => item === name).length){
+      return true
+    } 
+    return false
+  }
   componentDidMount() {
-    var { selectedCoins, isViewAllCoin, viewStyle, activeTsyms } = this.props.dash
 
-    this.props.fetchGeneralInfo(
-      selectedCoins,
-      activeTsyms,
-      viewStyle,
-      isViewAllCoin,
-    )
+    this.props.fetchGeneralInfo()
     
-    this.cryptoSubscription = setInterval(
-      () =>
-        this.props.fetchPriceList(
-          this.props.dash.selectedCoins,
-          this.props.dash.activeTsyms,
-          this.props.dash.viewStyle,
-          this.props.dash.isViewAllCoin
-      ),
-    5000,
-  );
+    this.cryptoSubscription = setInterval( () => this.props.fetchPriceList(), 5000,);
 
 }
 componentWillUnmount() {
@@ -43,8 +34,11 @@ componentWillUnmount() {
 }
 render() {
   const { priceList  } = this.props.coins
-  const { selectedCoins, isViewAllCoin, viewStyle, activeTsyms } = this.props.dash
-  const coinList = isViewAllCoin ? coinListAll : selectedCoins;
+  const { selectedCoins, viewStyle, activeTsyms, favoriteCoins, viewFilter } = this.props.dash
+  
+
+  const coinList = viewFilter === 'VIEW_SELECTED' ? selectedCoins : ( viewFilter === 'VIEW_ALL' ? coinListAll : favoriteCoins )
+
   console.log('Render <Market />');
     return (
       <div className="l-container l-container--market">
@@ -52,15 +46,16 @@ render() {
           <Grid className="c-card" item sm={12} lg={3}>
             <Dash
               selectedCoins={selectedCoins}
-              isViewAllCoin={isViewAllCoin}
               viewStyle={viewStyle}
               activeTsyms={activeTsyms}
+              favoriteCoins={favoriteCoins}
+              viewFilter={viewFilter}
 
               setViewStyle={this.props.setViewStyle}
               setActiveTsyms={this.props.setActiveTsyms}
-              setIsViewAllCoins={this.props.setIsViewAllCoins}
               setSelectedCoins={this.props.setSelectedCoins}
               fetchPriceList={this.props.fetchPriceList}
+              setViewFilter={this.props.setViewFilter}
             />
           </Grid>
           <Grid className="c-card" item sm={12} lg={9}>
@@ -79,12 +74,18 @@ render() {
                         coin={this.getGeneralInfoByCoinName(name)}
                         tsyms={activeTsyms}
                         priceList={priceList}
+                        isFavorite={this.checkIsThisFavoriteCoin(name)}
+                        addFavoriteCoins={this.props.addFavoriteCoins}
+                        removeFavoriteCoins={this.props.removeFavoriteCoins}
                       />
-                  ): (
+                  ) : (
                       <CoinCardDetail
                         name={name}
                         coin={this.getGeneralInfoByCoinName(name)}
                         priceList={priceList}
+                        isFavorite={this.checkIsThisFavoriteCoin(name)}
+                        addFavoriteCoins={this.props.addFavoriteCoins}
+                        removeFavoriteCoins={this.props.removeFavoriteCoins}
                       />
                   )}
                 </Grid>

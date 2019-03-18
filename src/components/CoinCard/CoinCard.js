@@ -13,8 +13,14 @@ import { tsymsIcons } from '../../constants';
 
 
 class CoinCard extends Component {
+  addToFavorite(){
+    this.props.addFavoriteCoins(this.props.name)
+  }
+  removeFavoriteCoins(){
+    this.props.removeFavoriteCoins(this.props.name)
+  }
   render() {
-    const { name, coin, tsyms, priceList } = this.props
+    const { name, coin, tsyms, isFavorite,  priceList } = this.props
     return (
       <Fade in={coin ? true : false} timeout={300}>
         <Card>
@@ -46,7 +52,11 @@ class CoinCard extends Component {
           </CardContent>
           <CardActions style={{justifyContent: 'center', flexDirection:'row'}}>
             <Button color="secondary">Learn more</Button>
-            <Button color="secondary">Add to favorite</Button>
+            {isFavorite ? (
+              <Button onClick={() => this.removeFavoriteCoins()} color="primary">Remove favorites</Button>
+            ):(
+              <Button onClick={() => this.addToFavorite()} color="secondary">Add to favorites</Button>
+            )}
           </CardActions>
         </Card>
       </Fade>

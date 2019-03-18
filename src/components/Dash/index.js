@@ -12,32 +12,41 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Collapse
 } from '@material-ui/core/';
 
 import { coinListAll, tsymsList } from '../../constants';
 
 class Dash extends Component {
+  changeFilterBySwitch(e){
+      console.log(e.target.checked);
+      console.log(e.target.value);
+      if (!e.target.checked){
+        this.props.setViewFilter("VIEW_SELECTED")
+      }
+      else{
+        this.props.setViewFilter(e.target.value)
+      }
+
+  }
   componentWillReceiveProps(nextProps) {
     if (nextProps.viewStyle !== this.props.viewStyle || 
         nextProps.selectedCoins !== this.props.selectedCoins ||
         nextProps.activeTsyms !== this.props.activeTsyms ||
-        nextProps.isViewAllCoin !== this.props.isViewAllCoin
+        nextProps.viewFilter !== this.props.viewFilter
     ) {
-      this.props.fetchPriceList(
-        nextProps.selectedCoins,
-        nextProps.activeTsyms,
-        nextProps.viewStyle,
-        nextProps.isViewAllCoin,
-      )
+      this.props.fetchPriceList()
     }
   }
   render() {
     console.log('Render <Dash />');
 
     // Vars
-    const { isViewAllCoin, selectedCoins, viewStyle, activeTsyms } = this.props
+    const { selectedCoins, viewStyle, activeTsyms, favoriteCoins, viewFilter } = this.props
     // Actions
-    const { setActiveTsyms, setViewStyle, setIsViewAllCoins, setSelectedCoins } = this.props
+    const { setActiveTsyms, setViewStyle, setSelectedCoins } = this.props
+
+    const isHaveFavoriteCoins = favoriteCoins.length ? true : false;
 
     return (
       <Paper
@@ -50,7 +59,7 @@ class Dash extends Component {
         <Typography variant="h4" component="p">
           Dash Settings
         </Typography>
-        <FormControl disabled={isViewAllCoin} margin="normal" fullWidth={true}>
+        <FormControl disabled={viewFilter === "VIEW_SELECTED" ? false : true} margin="normal" fullWidth={true}>
           <InputLabel htmlFor="select-multiple">Select coin list</InputLabel>
           <Select
             multiple
@@ -84,18 +93,37 @@ class Dash extends Component {
             ))}
           </Select>
         </FormControl>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={isViewAllCoin}
-              onChange={(e) => setIsViewAllCoins(e.target.checked)}
-              value="checkedA"
+
+        <FormControl margin="normal" component="fieldset" fullWidth={true} >
+          <FormLabel component="legend">Filter options</FormLabel>
+
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={viewFilter === "VIEW_ALL" ? true : false}
+                  onChange={(e) => this.changeFilterBySwitch(e)}
+                  value="VIEW_ALL"
+                />
+              }
+              label="View all coins"
             />
-          }
-          label="View all coin list"
-        />
+            <Collapse in={isHaveFavoriteCoins} timeout="auto" unmountOnExit>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={viewFilter === "VIEW_ONLY_FAVORITE" ? true : false}
+                    onChange={(e) => this.changeFilterBySwitch(e)}
+                    value="VIEW_ONLY_FAVORITE"
+                  />
+                }
+                label="View only favorite"
+              />
+            </Collapse>
+          </FormGroup>
+        </FormControl>
         <FormControl component="fieldset" fullWidth={true} >
-          <FormLabel component="legend">Select view style</FormLabel>
+          <FormLabel component="legend">View style options</FormLabel>
           <FormGroup row>
             <FormControlLabel
               control={

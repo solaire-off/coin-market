@@ -13,8 +13,14 @@ import {
 import { tsymsList, tsymsIcons } from '../../constants';
 
 class CoinCardDetail extends Component {
+  addToFavorite(){
+    this.props.addFavoriteCoins(this.props.name)
+  }
+  removeFavoriteCoins(){
+    this.props.removeFavoriteCoins(this.props.name)
+  }
   render() {
-    const { name,  priceList, coin } = this.props
+    const { name,  priceList, coin, isFavorite } = this.props
     return (
       <Fade in={coin ? true : false} timeout={300}>
         <Card>
@@ -62,14 +68,22 @@ class CoinCardDetail extends Component {
                 </Typography>
                 <CardActions  style={{alignItems: 'center', justifyContent: 'center', flexDirection:'column'}}>
                   <Button color="secondary">Learn more</Button>
-                  <Button color="secondary">Add to favorite</Button>
+                  {isFavorite ? (
+                    <Button onClick={() => this.removeFavoriteCoins()} color="primary">Remove favorites</Button>
+                  ):(
+                    <Button onClick={() => this.addToFavorite()} color="secondary">Add to favorites</Button>
+                  )}
                 </CardActions>
               </Grid>
             </Grid>
           </CardContent>
           <CardActions className="d-none d-sm-flex" style={{alignItems: 'center', justifyContent: 'center' }}>
             <Button color="secondary">Learn more</Button>
-            <Button color="secondary">Add to favorite</Button>
+            {isFavorite ? (
+              <Button onClick={() => this.removeFavoriteCoins()} color="primary">Remove favorites</Button>
+            ):(
+              <Button onClick={() => this.addToFavorite()} color="secondary">Add to favorites</Button>
+            )}
           </CardActions>
         </Card>
       </Fade>

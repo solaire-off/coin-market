@@ -16,7 +16,7 @@ export function setGeneralInfo(generalInfo) {
   }
 }
 
-export function fetchGeneralInfo(coins, tsyms, viewStyle, isViewAllCoin) {
+export function fetchGeneralInfo() {
   return dispatch => {
     var coinsUrl = coinListAll.join(',')
     var url = 'https://min-api.cryptocompare.com/data/coin/generalinfo?fsyms=' + coinsUrl + '&tsym=USD'
@@ -24,7 +24,7 @@ export function fetchGeneralInfo(coins, tsyms, viewStyle, isViewAllCoin) {
       .get(url)
       .then(response => {
         dispatch(setGeneralInfo(response.data.Data));
-        dispatch(fetchPriceList(coins, tsyms, viewStyle, isViewAllCoin))
+        dispatch(fetchPriceList())
       })
       .catch(error => {
         console.warn(error);
@@ -32,10 +32,10 @@ export function fetchGeneralInfo(coins, tsyms, viewStyle, isViewAllCoin) {
   };
 }
 
-export function fetchPriceList(coins, tsyms, viewStyle, isViewAllCoin) {
-  return dispatch => {
-    var coinsUrl = isViewAllCoin ? coinListAll : coins;
-    // var tsymsUrl = viewStyle === 'card' ? tsyms : tsymsList.join(',');
+export function fetchPriceList() {
+  return (dispatch, getState) => {
+    const { selectedCoins, viewFilter, favoriteCoins } = getState().dash
+    var coinsUrl = viewFilter === "VIEW_ALL" ? coinListAll : ( viewFilter === "VIEW_SELECTED" ? selectedCoins : favoriteCoins  );
     var tsymsUrl = tsymsList.join(',');
     var url =
       'https://min-api.cryptocompare.com/data/pricemulti?fsyms=' +
