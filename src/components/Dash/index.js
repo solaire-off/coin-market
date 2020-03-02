@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from "react";
 import {
   Paper,
   Typography,
@@ -13,57 +13,68 @@ import {
   Select,
   MenuItem,
   Collapse
-} from '@material-ui/core/';
+} from "@material-ui/core/";
 
-import { coinListAll, tsymsList } from '../../constants';
+import { coinListAll, tsymsList } from "../../constants";
 
 class Dash extends Component {
-  changeFilterBySwitch(e){
-      if (!e.target.checked){
-        this.props.setViewFilter("VIEW_SELECTED")
-      }
-      else{
-        this.props.setViewFilter(e.target.value)
-      }
-
+  changeFilterBySwitch(e) {
+    if (!e.target.checked) {
+      this.props.setViewFilter("VIEW_SELECTED");
+    } else {
+      this.props.setViewFilter(e.target.value);
+    }
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.viewStyle !== this.props.viewStyle || 
-        nextProps.selectedCoins !== this.props.selectedCoins ||
-        nextProps.activeTsyms !== this.props.activeTsyms ||
-        nextProps.viewFilter !== this.props.viewFilter
+    if (
+      nextProps.viewStyle !== this.props.viewStyle ||
+      nextProps.selectedCoins !== this.props.selectedCoins ||
+      nextProps.activeTsyms !== this.props.activeTsyms ||
+      nextProps.viewFilter !== this.props.viewFilter
     ) {
-      this.props.fetchPriceList()
+      this.props.fetchPriceList();
     }
   }
   render() {
     // Vars
-    const { selectedCoins, viewStyle, activeTsyms, favoriteCoins, viewFilter } = this.props
+    const {
+      selectedCoins,
+      viewStyle,
+      activeTsyms,
+      favoriteCoins,
+      viewFilter
+    } = this.props;
     // Actions
-    const { setActiveTsyms, setViewStyle, setSelectedCoins } = this.props
+    const { setActiveTsyms, setViewStyle, setSelectedCoins } = this.props;
 
     const isHaveFavoriteCoins = favoriteCoins.length ? true : false;
 
     return (
       <Paper
         style={{
-          padding: '20px',
-          marginTop: '15px',
-          position: 'sticky',
-          top: '15px',
-        }}>
+          padding: "20px",
+          marginTop: "15px",
+          position: "sticky",
+          top: "15px"
+        }}
+      >
         <Typography variant="h4" component="p">
           Settings
         </Typography>
-        <FormControl disabled={viewFilter === "VIEW_SELECTED" ? false : true} margin="normal" fullWidth={true}>
+        <FormControl
+          disabled={viewFilter === "VIEW_SELECTED" ? false : true}
+          margin="normal"
+          fullWidth={true}
+        >
           <InputLabel htmlFor="select-multiple">Coins list</InputLabel>
           <Select
             multiple
             value={selectedCoins}
-            onChange={(e) => {
-              setSelectedCoins(e.target.value)
+            onChange={e => {
+              setSelectedCoins(e.target.value);
             }}
-            input={<Input id="select-multiple" />}>
+            input={<Input id="select-multiple" />}
+          >
             {coinListAll.map(name => (
               <MenuItem key={name} value={name}>
                 {name}
@@ -71,17 +82,19 @@ class Dash extends Component {
             ))}
           </Select>
         </FormControl>
-        <FormControl disabled={viewStyle === 'table'} margin="normal" fullWidth={true}>
-          <InputLabel htmlFor="select-multiple">
-            Currency
-          </InputLabel>
+        <FormControl
+          disabled={viewStyle === "table"}
+          margin="normal"
+          fullWidth={true}
+        >
+          <InputLabel htmlFor="select-multiple">Currency</InputLabel>
           <Select
             value={activeTsyms}
-            onChange={(e) => {
-              setActiveTsyms(e.target.value)
-
+            onChange={e => {
+              setActiveTsyms(e.target.value);
             }}
-            input={<Input id="select-multiple" />}>
+            input={<Input id="select-multiple" />}
+          >
             {tsymsList.map(name => (
               <MenuItem key={name} value={name}>
                 {name}
@@ -90,7 +103,7 @@ class Dash extends Component {
           </Select>
         </FormControl>
 
-        <FormControl margin="normal" component="fieldset" fullWidth={true} >
+        <FormControl margin="normal" component="fieldset" fullWidth={true}>
           <FormLabel component="legend">Filter</FormLabel>
 
           <FormGroup>
@@ -98,7 +111,7 @@ class Dash extends Component {
               control={
                 <Switch
                   checked={viewFilter === "VIEW_ALL" ? true : false}
-                  onChange={(e) => this.changeFilterBySwitch(e)}
+                  onChange={e => this.changeFilterBySwitch(e)}
                   value="VIEW_ALL"
                 />
               }
@@ -109,7 +122,7 @@ class Dash extends Component {
                 control={
                   <Switch
                     checked={viewFilter === "VIEW_ONLY_FAVORITE" ? true : false}
-                    onChange={(e) => this.changeFilterBySwitch(e)}
+                    onChange={e => this.changeFilterBySwitch(e)}
                     value="VIEW_ONLY_FAVORITE"
                   />
                 }
@@ -118,18 +131,26 @@ class Dash extends Component {
             </Collapse>
           </FormGroup>
         </FormControl>
-        <FormControl component="fieldset" fullWidth={true} >
+        <FormControl component="fieldset" fullWidth={true}>
           <FormLabel component="legend">Style</FormLabel>
           <FormGroup row>
             <FormControlLabel
               control={
-                <Checkbox checked={viewStyle === 'card'} onChange={e => setViewStyle(e.target.value)} value="card" />
+                <Checkbox
+                  checked={viewStyle === "card"}
+                  onChange={e => setViewStyle(e.target.value)}
+                  value="card"
+                />
               }
               label="Cards"
             />
             <FormControlLabel
               control={
-                <Checkbox checked={viewStyle === 'table'} onChange={e => setViewStyle(e.target.value)} value="table" />
+                <Checkbox
+                  checked={viewStyle === "table"}
+                  onChange={e => setViewStyle(e.target.value)}
+                  value="table"
+                />
               }
               label="Blocks"
             />
@@ -141,5 +162,3 @@ class Dash extends Component {
 }
 
 export default Dash;
-
-

@@ -1,22 +1,30 @@
-import React, {Component} from 'react';
-import {Grid, AppBar, Toolbar, Typography, IconButton} from '@material-ui/core/';
-import RefreshIcon from '@material-ui/icons/Refresh';
+import React, { Component } from "react";
+import {
+  Grid,
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton
+} from "@material-ui/core/";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 class Header extends Component {
   render() {
-    const { refreshPriceList } = this.props
+    const { refreshPriceList } = this.props;
     return (
-      <AppBar
-        className="l-section"
-        position="static"
-        color="secondary">
+      <AppBar className="l-section" position="static" color="secondary">
         <Grid className="l-toolbar">
           <Grid item lg={12}>
             <Toolbar className="l-d-flex l-justify-content-between">
               <Typography variant="h6" color="inherit">
                 Coin Market &mdash; Fresh information about your favorite coin
               </Typography>
-              <IconButton onClick={() =>{refreshPriceList()}} color="inherit">
+              <IconButton
+                onClick={() => {
+                  refreshPriceList();
+                }}
+                color="inherit"
+              >
                 <RefreshIcon />
               </IconButton>
             </Toolbar>
@@ -27,7 +35,4 @@ class Header extends Component {
   }
 }
 
-export default Header
-
-
-
+export default Header;

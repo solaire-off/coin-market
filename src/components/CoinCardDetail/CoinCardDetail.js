@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from "react";
 import {
   Card,
   CardActions,
@@ -8,81 +8,141 @@ import {
   Grid,
   CircularProgress,
   Fade
-} from '@material-ui/core/';
+} from "@material-ui/core/";
 
-import { tsymsList, tsymsIcons } from '../../constants';
+import { tsymsList, tsymsIcons } from "../../constants";
 
 class CoinCardDetail extends Component {
-  addToFavorite(){
-    this.props.addFavoriteCoins(this.props.name)
+  addToFavorite() {
+    this.props.addFavoriteCoins(this.props.name);
   }
-  removeFavoriteCoins(){
-    this.props.removeFavoriteCoins(this.props.name)
+  removeFavoriteCoins() {
+    this.props.removeFavoriteCoins(this.props.name);
   }
   render() {
-    const { name,  priceList, coin, isFavorite } = this.props
+    const { name, priceList, coin, isFavorite } = this.props;
     return (
       <Fade in={coin ? true : false} timeout={300}>
         <Card>
-          <CardContent style={{paddingBottom: '16px'}}>
+          <CardContent style={{ paddingBottom: "16px" }}>
             <Grid container>
-              <Grid className="text-xs-center" item  lg={2} md={3} sm={3} xs={12}>
+              <Grid
+                className="text-xs-center"
+                item
+                lg={2}
+                md={3}
+                sm={3}
+                xs={12}
+              >
                 <img
                   className="detail-coin-img"
                   alt={name}
-                  style={{maxWidth: '100%', height: 'auto', maxHeight: '120px'}}
-                  src={coin && 'https://cryptocompare.com/' + coin['ImageUrl']} />
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto",
+                    maxHeight: "120px"
+                  }}
+                  src={coin && "https://cryptocompare.com/" + coin["ImageUrl"]}
+                />
               </Grid>
               <Grid item lg={4} md={3} sm={4} xs={12}>
-                <Typography className="text-xs-center" align="left" variant="h3" component="p">
+                <Typography
+                  className="text-xs-center"
+                  align="left"
+                  variant="h3"
+                  component="p"
+                >
                   {name}
                 </Typography>
-                <Typography className="text-xs-center" align="left" variant="title" component="p">
-                  Algorithm: {coin && coin['Algorithm']} 
+                <Typography
+                  className="text-xs-center"
+                  align="left"
+                  variant="title"
+                  component="p"
+                >
+                  Algorithm: {coin && coin["Algorithm"]}
                 </Typography>
-                <Typography gutterBottom={true} className="text-xs-center" align="left" variant="title" component="p">
-                  ProofType: {coin && coin['ProofType']} 
+                <Typography
+                  gutterBottom={true}
+                  className="text-xs-center"
+                  align="left"
+                  variant="title"
+                  component="p"
+                >
+                  ProofType: {coin && coin["ProofType"]}
                 </Typography>
               </Grid>
               <Grid item lg={4} md={3} sm={4} xs={12}>
-                {tsymsList.map((tsums => (
-                  <Typography className="text-xs-center" key={tsums} align="left" variant="h4" component="div">
+                {tsymsList.map(tsums => (
+                  <Typography
+                    className="text-xs-center"
+                    key={tsums}
+                    align="left"
+                    variant="h4"
+                    component="div"
+                  >
                     {priceList[name] && priceList[name][tsums] ? (
                       <span>
-                        {tsymsIcons[tsums]}{' '}
-                        {priceList[name][tsums]}
+                        {tsymsIcons[tsums]} {priceList[name][tsums]}
                       </span>
                     ) : (
                       <CircularProgress size={38} color="secondary" />
                     )}
                   </Typography>
-                )))}
+                ))}
               </Grid>
               <Grid className="d-sm-none" item lg={2} md={3} sm={4} xs={12}>
                 <Typography
                   align="center"
                   variant="h4"
                   component="p"
-                  color="textSecondary">
+                  color="textSecondary"
+                >
                   {name}
                 </Typography>
-                <CardActions  style={{alignItems: 'center', justifyContent: 'center', flexDirection:'column'}}>
+                <CardActions
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "column"
+                  }}
+                >
                   <Button color="secondary">Learn more</Button>
                   {isFavorite ? (
-                    <Button onClick={() => this.removeFavoriteCoins()} color="primary">Remove favorites</Button>
-                  ):(
-                    <Button onClick={() => this.addToFavorite()} color="secondary">Add to favorites</Button>
+                    <Button
+                      onClick={() => this.removeFavoriteCoins()}
+                      color="primary"
+                    >
+                      Remove favorites
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => this.addToFavorite()}
+                      color="secondary"
+                    >
+                      Add to favorites
+                    </Button>
                   )}
                 </CardActions>
               </Grid>
             </Grid>
           </CardContent>
-          <CardActions className="d-none d-sm-flex" style={{alignItems: 'center', justifyContent: 'center' }}>
+          <CardActions
+            className="d-none d-sm-flex"
+            style={{ alignItems: "center", justifyContent: "center" }}
+          >
             <Button color="secondary">Learn more</Button>
             {isFavorite ? (
-              <Button onClick={() => this.removeFavoriteCoins()} color="primary">Remove favorites</Button>
-            ):(
-              <Button onClick={() => this.addToFavorite()} color="secondary">Add to favorites</Button>
+              <Button
+                onClick={() => this.removeFavoriteCoins()}
+                color="primary"
+              >
+                Remove favorites
+              </Button>
+            ) : (
+              <Button onClick={() => this.addToFavorite()} color="secondary">
+                Add to favorites
+              </Button>
             )}
           </CardActions>
         </Card>
@@ -91,6 +151,4 @@ class CoinCardDetail extends Component {
   }
 }
 
-export default CoinCardDetail
-
-
+export default CoinCardDetail;
