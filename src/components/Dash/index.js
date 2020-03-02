@@ -53,10 +53,10 @@ class Dash extends Component {
           top: '15px',
         }}>
         <Typography variant="h4" component="p">
-          Dash Settings
+          Settings
         </Typography>
         <FormControl disabled={viewFilter === "VIEW_SELECTED" ? false : true} margin="normal" fullWidth={true}>
-          <InputLabel htmlFor="select-multiple">Select coin list</InputLabel>
+          <InputLabel htmlFor="select-multiple">Coins list</InputLabel>
           <Select
             multiple
             value={selectedCoins}
@@ -73,7 +73,7 @@ class Dash extends Component {
         </FormControl>
         <FormControl disabled={viewStyle === 'table'} margin="normal" fullWidth={true}>
           <InputLabel htmlFor="select-multiple">
-            Select currency
+            Currency
           </InputLabel>
           <Select
             value={activeTsyms}
@@ -91,7 +91,7 @@ class Dash extends Component {
         </FormControl>
 
         <FormControl margin="normal" component="fieldset" fullWidth={true} >
-          <FormLabel component="legend">Filter options</FormLabel>
+          <FormLabel component="legend">Filter</FormLabel>
 
           <FormGroup>
             <FormControlLabel
