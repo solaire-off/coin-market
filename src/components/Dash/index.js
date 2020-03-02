@@ -19,8 +19,6 @@ import { coinListAll, tsymsList } from '../../constants';
 
 class Dash extends Component {
   changeFilterBySwitch(e){
-      console.log(e.target.checked);
-      console.log(e.target.value);
       if (!e.target.checked){
         this.props.setViewFilter("VIEW_SELECTED")
       }
@@ -39,8 +37,6 @@ class Dash extends Component {
     }
   }
   render() {
-    console.log('Render <Dash />');
-
     // Vars
     const { selectedCoins, viewStyle, activeTsyms, favoriteCoins, viewFilter } = this.props
     // Actions
@@ -106,7 +102,7 @@ class Dash extends Component {
                   value="VIEW_ALL"
                 />
               }
-              label="View all coins"
+              label="All coins"
             />
             <Collapse in={isHaveFavoriteCoins} timeout="auto" unmountOnExit>
               <FormControlLabel
@@ -117,25 +113,25 @@ class Dash extends Component {
                     value="VIEW_ONLY_FAVORITE"
                   />
                 }
-                label="View only favorite"
+                label="Only favorite"
               />
             </Collapse>
           </FormGroup>
         </FormControl>
         <FormControl component="fieldset" fullWidth={true} >
-          <FormLabel component="legend">View style options</FormLabel>
+          <FormLabel component="legend">Style</FormLabel>
           <FormGroup row>
             <FormControlLabel
               control={
                 <Checkbox checked={viewStyle === 'card'} onChange={e => setViewStyle(e.target.value)} value="card" />
               }
-              label="Card-like"
+              label="Cards"
             />
             <FormControlLabel
               control={
                 <Checkbox checked={viewStyle === 'table'} onChange={e => setViewStyle(e.target.value)} value="table" />
               }
-              label="Table-like"
+              label="Blocks"
             />
           </FormGroup>
         </FormControl>
