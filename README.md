@@ -1,4 +1,4 @@
-Based on React & Redux
+Demo: https://solairedev.space/src/coin-market/
 
 ## Functionality
 
@@ -14,6 +14,13 @@ Based on React & Redux
 * Generate a graph on the value of coins
 * Create a total graph of the value of your favorite coins
 * Import charts into Excel
+
+## Run 
+
+~~~
+$ npm i
+$ npm start
+~~~
 
 ## Screenshots
 
